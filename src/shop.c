@@ -29,7 +29,7 @@ static int customers_exist(cust_t * cust)
 int shop_open(barb_t * barb, cust_t *cust)
 {
 	barbers_exist(barb);
-	customers_enter(cust);
+	customers_exist(cust);
 }
 
 int shop_close(void)
