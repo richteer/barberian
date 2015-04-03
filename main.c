@@ -23,14 +23,12 @@ static int parse_args(args_t * arg, int argc, char ** argv)
 			case 'b': arg->barb_num      = atoi(argv[++i]); break;
 			case 't': arg->barb_time     = atoi(argv[++i]); break;
 
-			default: fprintf(stderr, "Unrecognized flag %s\n", argv[i]); break;
+			default : fprintf(stderr, "Unrecognized flag %s\n", argv[i]); break;
 		}
 	}
 
 	return 0;
 }
-
-
 
 int main(int argc, char ** argv)
 {
@@ -38,7 +36,9 @@ int main(int argc, char ** argv)
 
 	parse_args(&args, argc, argv);
 
-	barber_init();
+	barber_init(args.barb_num, args.cust_num);
+
+	barber_cut(args.barb_time, args.cust_delay, arg.cust_variance);
 
 	return 0;
 }
