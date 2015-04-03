@@ -16,7 +16,6 @@ static int barbers_exist(barb_t * barb, cust_t * cust)
 	barbers = malloc(barb->number*sizeof(pthread_t));
 
 	for (i = 0; i < barb->number; i++) {
-		// TODO: Set proper args here
 		if (ret = pthread_create(barbers + i, NULL, (void* (*)(void*)) barber_do, args)) break;
 	}
 
