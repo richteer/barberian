@@ -5,7 +5,7 @@ CC      = gcc
 CFLAGS  = -c
 LDFLAGS = -lpthread
 
-SRCS := b
+SRCS := barber.c
 DEPS := $(addprefix dep/,$(patsubst %.c,%.d,$(SRCS)))
 OBJS := $(addprefix obj/,$(patsubst %.c,%.o,$(SRCS)))
 SRCS := $(addprefix src/,$(SRCS))
@@ -14,8 +14,8 @@ SRCS := $(addprefix src/,$(SRCS))
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS) fs.c
-	$(CC) $(OBJS)  $(LDFLAGS) fs.c -o $(TARGET)
+$(TARGET): $(OBJS) main.c
+	$(CC) $(OBJS)  $(LDFLAGS) main.c -o $(TARGET)
 
 obj/%.o: src/%.c
 	@ mkdir -p $(@D)
