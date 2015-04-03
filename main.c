@@ -2,26 +2,22 @@
 #include <stdlib.h>
 #include <semaphore.h>
 #include <pthread.h>
+#include "types.h"
 
-typedef struct {
-	int cust_num;
-	int cust_delay;
-	int cust_variance;
-	int barb_num;
-	int barb_time;
-} args_t;
-
-static int parse_args(args_t * arg, int argc, char ** argv)
+static int parse_args(barb_t * barb, cust_t * cust, int argc, char ** argv)
 {
 	int i;
 
+	// TODO: Set defaults
+
 	for (i = 1; i < argc; i++) {
 		switch(argv[i][1]) {
-			case 'c': arg->cust_num      = atoi(argv[++i]); break;
-			case 'd': arg->cust_delay    = atoi(argv[++i]); break;
-			case 'v': arg->cust_variance = atoi(argv[++i]); break;
-			case 'b': arg->barb_num      = atoi(argv[++i]); break;
-			case 't': arg->barb_time     = atoi(argv[++i]); break;
+			case 't': barb->proctime  = atoi(argv[++i]); break;
+			case 'b': barb->number    = atoi(argv[++i]); break;
+
+			case 'c': cust->number    = atoi(argv[++i]); break;
+			case 'd': cust->delay     = atoi(argv[++i]); break;
+			case 'v': cust->variance  = atoi(argv[++i]); break;
 
 			default : fprintf(stderr, "Unrecognized flag %s\n", argv[i]); break;
 		}
@@ -32,13 +28,12 @@ static int parse_args(args_t * arg, int argc, char ** argv)
 
 int main(int argc, char ** argv)
 {
-	args_t args = {0};
+	cust_t cust = {0};
+	barb_t barb = {0};
 
-	parse_args(&args, argc, argv);
+	parse_args(&barb, &cust, argc, argv);
 
-	barber_init(args.barb_num, args.barb_time);
-
-	barber_cut(args.cust_delay, arg.cust_variance);
+	shop_open(&barb, &cust);
 
 	return 0;
 }
