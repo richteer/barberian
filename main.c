@@ -36,9 +36,9 @@ int main(int argc, char ** argv)
 
 	parse_args(&args, argc, argv);
 
-	barber_init(args.barb_num, args.cust_num);
+	barber_init(args.barb_num, args.barb_time);
 
-	barber_cut(args.barb_time, args.cust_delay, arg.cust_variance);
+	barber_cut(args.cust_delay, arg.cust_variance);
 
 	return 0;
 }

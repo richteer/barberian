@@ -1,18 +1,34 @@
 #include "barber.h"
 #include <semaphore.h>
 
-static sem_t barbers;
-static int customers;
 
-int barber_init(int barbs, int cust)
+struct {
+	sem_t semaphore;
+	thread_t threads;
+
+	int number;
+	int proctime;
+} barbers;
+
+struct {
+	// TODO: care about the number maybe
+	int number; // Number of customers total left. If negative, infinite
+	int delay;
+	int variance;
+} customers;
+
+int barber_init(int barbs, int proc)
 {
-	customers = cust;
-	sem_init(&barbers, 0, barbs);
+	sem_init(&barbers.semaphore, 0, barbs);
+	barbers.number = barbs;
+	barbers.proctime = proc;
 
 	return 0;
 }
 
-int barber_cut(int barb_time, int cust_delay, int cust_variance)
+int barber_cut(int cust_delay, int cust_variance)
 {
+	threads_init();
+
 	// TODO: This
 }
