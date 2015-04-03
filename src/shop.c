@@ -1,54 +1,61 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdlib.h>
+#include <time.h>
+#include <stdio.h>
 #include "types.h"
-#include "barber.h"
 
-static pthread_t * barbers;  // Threads for the barbers
-static pthread_t   custflow; // Threads for adding in new customers
+typedef struct {
+	sem_t * semaphore;
+	int proctime;
+	int number;
+} custarg_t;
 
-static int barbers_exist(barb_t * barb, cust_t * cust)
+static void customer_do(custarg_t * cargs)
 {
-	int i;
-	int ret;
-	void  * args[] = {barb, cust};
+	int num = cargs->number;
 
-	barbers = malloc(barb->number*sizeof(pthread_t));
+	printf("Customer %d is patiently waiting\n", num);
+	sem_wait(cargs->semaphore);
+	printf("Customer %d is now getting his hair cut\n", num);
+	sleep(cargs->proctime);
+	sem_post(cargs->semaphore);
+	printf("Customer %d is now sporting a fancy new look :D\n", num);
 
-	for (i = 0; i < barb->number; i++) {
-		if (ret = pthread_create(barbers + i, NULL, (void* (*)(void*)) barber_do, args)) break;
+}
+
+int shop_operate(barb_t * barb, cust_t * cust)
+{
+	pthread_t foo;
+	custarg_t cargs;
+	sem_t sem;
+	int waiting;
+
+	sem_init(&sem, 0, barb->number);
+	cargs.semaphore = &sem;
+	cargs.proctime = barb->proctime;
+
+	srand(time(NULL));
+
+	while (cust->number--) {
+		printf("Customer %d arrives at the shop!\n", cust->number);
+		// This is where I would check the maximum number of allowed waiting clients
+		// But thanks to Linux's lovely decision, the value returned is 0, not
+		// the number of waiting threads.
+		/*
+		sem_getvalue(&sem, &waiting);
+		if (waiting == barb->maxwait) {
+			printf("...but leaves when he sees how many people are waiting :(\n)");
+			continue;
+		}
+		*/
+		cargs.number = cust->number;
+		pthread_create(&foo, NULL, (void*(*)(void*)) customer_do, &cargs);
+		sleep(cust->delay);
 	}
 
-	return ret;
-}
+	printf("No more customers!\n");
+	while(1);
 
-static int customers_exist(cust_t * cust)
-{
-	return pthread_create(&custflow, NULL, NULL, NULL);
-}
-
-int shop_open(barb_t * barb, cust_t *cust)
-{
-	int ret;
-
-	// Start the relevant threads
-	if (ret = barbers_exist(barb, cust)) return ret;
-	ret = customers_exist(cust);
-
-	return ret;
-}
-
-int shop_close(barb_t * barb)
-{
-	int i;
-
-	// Join on the customer thread first...
-	pthread_join(custflow, NULL);
-
-	// ...because the barber threads will join immediately if there are no customers left.
-	for (i = 0; i < barb->number; i++) {
-		pthread_join(barbers[i], NULL);
-	}
-
-	free(barbers);
+	return 0;
 }

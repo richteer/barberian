@@ -2,6 +2,5 @@
 #define _shop_h_
 
 int shop_open(barb_t * barb, cust_t * cust);
-int shop_close(void);
 
 #endif
