@@ -21,11 +21,10 @@ static int barbers_exist(barb_t * barb)
 	return ret;
 }
 
-static int customers_enter(cust_t * cust)
+static int customers_exist(cust_t * cust)
 {
-	// TODO: Let the customers enter!
+	// TODO: Spawn the customer thread
 }
-
 
 int shop_open(barb_t * barb, cust_t *cust)
 {
