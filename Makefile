@@ -5,7 +5,7 @@ CC      = gcc
 CFLAGS  = -c
 LDFLAGS = -lpthread
 
-SRCS := barber.c
+SRCS := barber.c threads.c
 DEPS := $(addprefix dep/,$(patsubst %.c,%.d,$(SRCS)))
 OBJS := $(addprefix obj/,$(patsubst %.c,%.o,$(SRCS)))
 SRCS := $(addprefix src/,$(SRCS))
