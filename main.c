@@ -34,6 +34,7 @@ int main(int argc, char ** argv)
 	parse_args(&barb, &cust, argc, argv);
 
 	shop_open(&barb, &cust);
+	shop_close(&barb);
 
 	return 0;
 }
