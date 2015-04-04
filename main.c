@@ -4,10 +4,12 @@
 #include <pthread.h>
 #include "types.h"
 
+// Parse the command line arguments into customer and barber structs
 static int parse_args(barb_t * barb, cust_t * cust, int argc, char ** argv)
 {
 	int i;
 
+	// Defaults
 	barb->proctime = 1;
 	barb->number   = 3;
 	barb->maxwait  = 5;
@@ -51,6 +53,7 @@ int main(int argc, char ** argv)
 			cust.number, cust.delay, cust.variance);
 	}
 
+	// Start the simulation
 	shop_operate(&barb, &cust);
 
 	return 0;

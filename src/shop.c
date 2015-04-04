@@ -16,14 +16,23 @@ static void customer_do(custarg_t * cargs)
 	int num = cargs->number;
 
 	printf("Customer %d is patiently waiting\n", num);
-	sem_wait(cargs->semaphore);
-	printf("Customer %d is now getting his hair cut\n", num);
-	sleep(cargs->proctime);
-	sem_post(cargs->semaphore);
-	printf("Customer %d is now sporting a fancy new look :D\n", num);
 
+	sem_wait(cargs->semaphore);
+	// Enter the critical section.
+	//  A virtual barber is now processing this customer, only the number of
+	//  barbers specified should be in the section at a time
+	//   (In other words, the initial value for the semaphore)
+	// NOTE: If no barbers are active, it should enter instantly.
+	printf("Customer %d is now getting his hair cut\n", num);
+	sleep(cargs->proctime); // Simulate the time it takes to get the haircut
+	// Now leave the critical section, freeing the barber.
+	sem_post(cargs->semaphore);
+
+	printf("Customer %d is now sporting a fancy new look :D\n", num);
+	// Thread is now done.
 }
 
+// Main operation logic
 int shop_operate(barb_t * barb, cust_t * cust)
 {
 	pthread_t foo;
@@ -50,11 +59,17 @@ int shop_operate(barb_t * barb, cust_t * cust)
 		}
 		*/
 		cargs.number = cust->number;
+		// Start the customer thread.
+		// NOTE: Thread references are not being persisted, as there isn't much of a point
+		//  They should exit after acquiring the semaphore
 		pthread_create(&foo, NULL, (void*(*)(void*)) customer_do, &cargs);
 		sleep(cust->delay);
 	}
 
 	printf("No more customers!\n");
+
+	// Spin forever, since the pthread references are thrown out and can't be joined.
+	//  This is significant in case there still are threads that are waiting on a semaphore.
 	while(1);
 
 	return 0;
