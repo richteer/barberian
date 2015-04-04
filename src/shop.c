@@ -63,7 +63,13 @@ int shop_operate(barb_t * barb, cust_t * cust)
 		// NOTE: Thread references are not being persisted, as there isn't much of a point
 		//  They should exit after acquiring the semaphore
 		pthread_create(&foo, NULL, (void*(*)(void*)) customer_do, &cargs);
-		sleep(cust->delay);
+
+		// Wait for the next customer to arrive
+		if (cust->variance)
+			sleep(cust->delay + (rand() % (cust->variance*2 - cust->variance)));
+		else
+			sleep(cust->delay);
+
 	}
 
 	printf("No more customers!\n");
